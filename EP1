@@ -1,0 +1,261 @@
+import java.util.*;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class LeiaCSV {
+
+	public static void main(String[] args) {
+
+		LeiaCSV obj = new LeiaCSV();
+		obj.run();
+
+	}
+
+	class Coordenada {
+
+		double X;
+		double Y;
+		double id;
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getEnclosingInstance().hashCode();
+			long temp;
+			temp = Double.doubleToLongBits(X);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
+			temp = Double.doubleToLongBits(Y);
+			result = prime * result + (int) (temp ^ (temp >>> 32));
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Coordenada other = (Coordenada) obj;
+			if (!getEnclosingInstance().equals(other.getEnclosingInstance()))
+				return false;
+			if (Double.doubleToLongBits(X) != Double.doubleToLongBits(other.X))
+				return false;
+			if (Double.doubleToLongBits(Y) != Double.doubleToLongBits(other.Y))
+				return false;
+			return true;
+		}
+
+		private LeiaCSV getEnclosingInstance() {
+			return LeiaCSV.this;
+		}
+
+		@Override
+		public String toString() {
+			return "[X=" + X + ", Y=" + Y + "]";
+		}
+
+	}
+	
+	class Local {
+		
+		Coordenada coordenada;
+		Long quantidade = 1L;
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getEnclosingInstance().hashCode();
+			result = prime * result + ((coordenada == null) ? 0 : coordenada.hashCode());
+			return result;
+		}
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Local other = (Local) obj;
+			if (!getEnclosingInstance().equals(other.getEnclosingInstance()))
+				return false;
+			if (coordenada == null) {
+				if (other.coordenada != null)
+					return false;
+			} else if (!coordenada.equals(other.coordenada))
+				return false;
+			return true;
+		}
+		private LeiaCSV getEnclosingInstance() {
+			return LeiaCSV.this;
+		}
+		@Override
+		public String toString() {
+			return "Local [coordenada=" + coordenada + ", quantidade=" + quantidade + "]";
+		}
+		
+		
+		
+	}
+
+	public void run() {
+
+		  String arquivoCSV = "C:/Users/maria/Desktop/OD_2017.csv";
+		  BufferedReader br = null;
+		  int[][] head = {{2, 3}, {57, 58}, {62, 63}, {71, 72}, {84, 85}, {88, 89}, {92, 93}, {96, 97}, {100, 101}};
+		  String linha = "";
+		  String csvDivisor = ",";
+		  int n = 0;
+		  List<Local> lista = new ArrayList<Local>();
+		  Date inicio = new Date();
+		  try {
+
+			  br = new BufferedReader(new FileReader(arquivoCSV));
+			  while ((linha = br.readLine()) != null) {
+				  String[] lendo = linha.split(csvDivisor);
+				  
+				  if (n != 0) {
+					  for (int[] headx : head) {
+						  Coordenada coordenada = new Coordenada();
+						  coordenada.X = Double.parseDouble(lendo[headx[0]]);
+						  coordenada.Y = Double.parseDouble(lendo[headx[1]]);
+						  coordenada.id = Double.parseDouble(lendo[43]);
+						  if (coordenada.X == 0.0 && coordenada.Y == 0.0) continue;
+						  Local local = new Local();
+						  local.coordenada = coordenada;
+						  int criar = 1;
+						  for (int i = 0; i < lista.size(); i++) {
+							  if (lista.get(i).coordenada.X == local.coordenada.X) {
+								  if (lista.get(i).coordenada.Y == local.coordenada.Y) {
+									  if (lista.get(i).coordenada.id != local.coordenada.id) {
+										  Local local2 = lista.get(lista.indexOf(local));
+										  local2.quantidade += 1;
+									  } else {
+										  criar = 0;
+										  break;
+									  }
+								  }
+							  }
+						  }
+						  if (criar == 1) {
+							  lista.add(local);
+						  }
+					  }
+				  }
+				  n++;
+			  }
+			  class Frequentadores {
+
+				  Long frequentadores = 1L;
+
+					@Override
+					public int hashCode() {
+						final int prime = 31;
+						int result = 1;
+						result = prime * result + getEnclosingInstance().hashCode();
+						return result;
+					}
+
+					@Override
+					public boolean equals(Object obj) {
+						if (this == obj)
+							return true;
+						if (obj == null)
+							return false;
+						if (getClass() != obj.getClass())
+							return false;
+						Frequentadores other = (Frequentadores) obj;
+						if (!getEnclosingInstance().equals(other.getEnclosingInstance()))
+							return false;
+						if (frequentadores != other.frequentadores)
+							return false;
+						return true;
+					}
+
+					private LeiaCSV getEnclosingInstance() {
+						return LeiaCSV.this;
+					}
+
+					@Override
+					public String toString() {
+						return "[frequentadores =" + frequentadores + "]";
+					}
+
+				}
+			  class Lugares {
+					
+					Frequentadores frequentadores;
+					Long lugares = 1L;
+					@Override
+					public int hashCode() {
+						final int prime = 31;
+						int result = 1;
+						result = prime * result + getEnclosingInstance().hashCode();
+						result = prime * result + ((frequentadores == null) ? 0 : frequentadores.hashCode());
+						return result;
+					}
+					@Override
+					public boolean equals(Object obj) {
+						if (this == obj)
+							return true;
+						if (obj == null)
+							return false;
+						if (getClass() != obj.getClass())
+							return false;
+						Lugares other = (Lugares) obj;
+						if (!getEnclosingInstance().equals(other.getEnclosingInstance()))
+							return false;
+						if (frequentadores == null) {
+							if (other.frequentadores != null)
+								return false;
+						} else if (!frequentadores.equals(other.frequentadores))
+							return false;
+						return true;
+					}
+					private LeiaCSV getEnclosingInstance() {
+						return LeiaCSV.this;
+					}
+					@Override
+					public String toString() {
+						return "Lugares [frequentadores=" + frequentadores + ", lugares=" + lugares + "]";
+					}
+				}
+			  List<Lugares> lista2 = new ArrayList<Lugares>();
+			  for (int i = 0; i < lista.size(); i++) {
+				  Frequentadores frequentadores = new Frequentadores();
+				  frequentadores.frequentadores = lista.get(i).quantidade;
+				  Lugares lugares = new Lugares();
+				  lugares.frequentadores = frequentadores;
+				  if (lista2.contains(lugares)) {
+					  Lugares lugares2 = lista2.get(lista2.indexOf(lugares));
+					  lugares2.lugares += 1;
+				  } else { 
+					  lista2.add(lugares);
+			  		}
+			  }
+			  System.out.println("Frequentadores x Lugares");
+			  for (int j = 0; j < lista2.size(); j++) {
+				  System.out.println(lista2.get(j).frequentadores.frequentadores + "\t" + lista2.get(j).lugares);
+			  }
+			  System.out.println("Tempo total: " + (new Date().getTime()-inicio.getTime()) + "ms");
+		    } catch (FileNotFoundException e) {
+		        e.printStackTrace();
+		    } catch (IOException e) {
+		        e.printStackTrace();
+		    } finally {
+		        if (br != null) {
+		            try {
+		                br.close();
+		            } catch (IOException e) {
+		                e.printStackTrace();
+		            }
+		        }
+		    }
+	  }
+}
