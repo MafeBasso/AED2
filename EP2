@@ -1,0 +1,151 @@
+import java.util.*;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class EP2 {
+
+	public static void main(String[] args) {
+		EP2 obj = new EP2();
+		obj.run();
+
+	}
+	
+	class Classe1 {
+		List <Integer> ids2 = new LinkedList<Integer>();
+		@Override
+		public String toString() {
+			return "[id2=" + ids2 + "]";
+		}
+	}
+	
+	class Classe2 {
+		int id1;
+		Classe1 classe;
+		@Override
+		public String toString() {
+			return "[id1=" + id1 + classe + "]";
+		}
+	}
+	
+	public void run() {
+
+		  String cenario = "C:/Users/maria/Desktop/cenario3.txt";
+		  BufferedReader br = null;
+		  String linha = "";
+		  int n = 0;
+		  int criar1 = 1;
+		  int criar2 = 1;
+		  int totalArestas = 0;
+		  List <Classe2> Grafo = new ArrayList<Classe2>();
+		  try {
+
+			  br = new BufferedReader(new FileReader(cenario));
+			  while ((linha = br.readLine()) != null) {
+				  String[] encontro = linha.split(" ");
+				  
+				  if (n > 1) {
+					  
+					  for (int i = 0; i < Grafo.size(); i++) {
+						  if (Grafo.get(i).id1 == Integer.parseInt(encontro[0])) {
+							  
+							  if (Grafo.get(i).classe.ids2.contains(Integer.parseInt(encontro[1]))) {
+								  criar1 = 0;
+								  criar2 = 0;
+								  break;
+							  } else {
+								  Grafo.get(i).classe.ids2.add(Integer.parseInt(encontro[1]));
+								  criar1 = 0;
+								  totalArestas++;
+							  }
+							  
+						  }
+						  
+						  if (Grafo.get(i).id1 == Integer.parseInt(encontro[1])) {
+							  
+							  if (Grafo.get(i).classe.ids2.contains(Integer.parseInt(encontro[0]))) {
+								  criar1 = 0;
+								  criar2 = 0;
+								  break;
+							  } else {
+								  Grafo.get(i).classe.ids2.add(Integer.parseInt(encontro[0]));
+								  criar2 = 0;
+							  }
+						  }
+
+					  }
+					  
+					  if (criar1 == 1) {
+						  Classe1 classe1 = new Classe1();
+						  classe1.ids2.add(Integer.parseInt(encontro[1]));
+						  Classe2 classe2 = new Classe2();
+						  classe2.id1 = (Integer.parseInt(encontro[0]));
+						  classe2.classe = classe1;
+						  Grafo.add(classe2);
+						  totalArestas++;
+					  }
+					  
+					  if (criar2 == 1) {  
+						  Classe1 classe12 = new Classe1();
+						  classe12.ids2.add(Integer.parseInt(encontro[0]));
+						  Classe2 classe21 = new Classe2();
+						  classe21.id1 = (Integer.parseInt(encontro[1]));
+						  classe21.classe = classe12;
+						  Grafo.add(classe21);
+					  }
+			  
+				  }
+				  n++;
+			  }
+			  
+			  class Grafico {
+				  int pessoas;
+				  int encontros;
+				  @Override
+					public String toString() {
+						return "Grafico [pessoas=" + pessoas + ", encontros=" + encontros + "]";
+					}
+			  }
+			  
+			  List<Grafico> imprimir = new ArrayList<Grafico>();
+			  
+			  for (int i = 0; i < Grafo.size(); i++) {
+				  int criar3 = 1;
+				  Grafico grafico = new Grafico();
+				  grafico.encontros = Grafo.get(i).classe.ids2.size();
+				  grafico.pessoas = 1;
+				  for (int j = 0; j < imprimir.size(); j++) {
+					  if (imprimir.get(j).encontros == grafico.encontros) {
+						  imprimir.get(j).pessoas = imprimir.get(j).pessoas + 1;
+						  criar3 = 0;
+						  break;
+					  }
+				  }
+				  if (criar3 == 1) imprimir.add(grafico);
+			  }
+			  
+			  System.out.println("Numero total de arestas: " + totalArestas);
+			  System.out.println("Pessoas x Encontros");
+			  System.out.println(86318 - Grafo.size() + "\t" + 0);
+			  for (int j = 0; j < imprimir.size(); j++) {
+				  System.out.println(imprimir.get(j).pessoas + "\t" + imprimir.get(j).encontros);
+			  }
+			  
+		    } catch (FileNotFoundException e) {
+		        e.printStackTrace();
+		    } catch (IOException e) {
+		        e.printStackTrace();
+		    } finally {
+		        if (br != null) {
+		            try {
+		                br.close();
+		            } catch (IOException e) {
+		                e.printStackTrace();
+		            }
+		        }
+		    }
+	  }
+	
+}
