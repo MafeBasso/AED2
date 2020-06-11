@@ -14,125 +14,98 @@ public class EP2 {
 	}
 	
 	class Classe1 {
-		List <Integer> ids2 = new LinkedList<Integer>();
-		@Override
-		public String toString() {
-			return "[id2=" + ids2 + "]";
+		Integer id;
+		Set<Integer> ids2 = new HashSet<Integer>();
+		
+		public Classe1(Integer id) {
+			this.id = id;
 		}
-	}
-	
-	class Classe2 {
-		int id1;
-		Classe1 classe;
+		
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getEnclosingInstance().hashCode();
+			result = prime * result + ((id == null) ? 0 : id.hashCode());
+			return result;
+		}
+
+
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Classe1 other = (Classe1) obj;
+			if (!getEnclosingInstance().equals(other.getEnclosingInstance()))
+				return false;
+			if (id == null) {
+				if (other.id != null)
+					return false;
+			} else if (!id.equals(other.id))
+				return false;
+			return true;
+		}
+
+
+
 		@Override
 		public String toString() {
-			return "[id1=" + id1 + classe + "]";
+			return "[id=" + id + ", e: " + ids2 + "] ";
+		}
+
+
+
+		private EP2 getEnclosingInstance() {
+			return EP2.this;
 		}
 	}
 	
 	public void run() {
-
-		  String cenario = "C:/Users/maria/Desktop/cenario3.txt";
+		  String cenario = "C:/Users/maria/Desktop/cenario1.txt";
 		  BufferedReader br = null;
 		  String linha = "";
 		  int n = 0;
-		  int criar1 = 1;
-		  int criar2 = 1;
-		  int totalArestas = 0;
-		  List <Classe2> Grafo = new ArrayList<Classe2>();
+		  List<Classe1> Grafo = new ArrayList<Classe1>();
 		  try {
 
 			  br = new BufferedReader(new FileReader(cenario));
 			  while ((linha = br.readLine()) != null) {
-				  String[] encontro = linha.split(" ");
-				  
 				  if (n > 1) {
+					  String[] encontro = linha.split(" ");
 					  
-					  for (int i = 0; i < Grafo.size(); i++) {
-						  if (Grafo.get(i).id1 == Integer.parseInt(encontro[0])) {
-							  
-							  if (Grafo.get(i).classe.ids2.contains(Integer.parseInt(encontro[1]))) {
-								  criar1 = 0;
-								  criar2 = 0;
-								  break;
-							  } else {
-								  Grafo.get(i).classe.ids2.add(Integer.parseInt(encontro[1]));
-								  criar1 = 0;
-								  totalArestas++;
-							  }
-							  
-						  }
-						  
-						  if (Grafo.get(i).id1 == Integer.parseInt(encontro[1])) {
-							  
-							  if (Grafo.get(i).classe.ids2.contains(Integer.parseInt(encontro[0]))) {
-								  criar1 = 0;
-								  criar2 = 0;
-								  break;
-							  } else {
-								  Grafo.get(i).classe.ids2.add(Integer.parseInt(encontro[0]));
-								  criar2 = 0;
-							  }
-						  }
-
+					  Classe1 p1 = new Classe1(Integer.parseInt(encontro[0]));
+					  Classe1 p2 = new Classe1(Integer.parseInt(encontro[1]));
+					  if (!Grafo.contains(p1)) {
+						  Grafo.add(p1);
 					  }
-					  
-					  if (criar1 == 1) {
-						  Classe1 classe1 = new Classe1();
-						  classe1.ids2.add(Integer.parseInt(encontro[1]));
-						  Classe2 classe2 = new Classe2();
-						  classe2.id1 = (Integer.parseInt(encontro[0]));
-						  classe2.classe = classe1;
-						  Grafo.add(classe2);
-						  totalArestas++;
+					  Grafo.get(Grafo.indexOf(p1)).ids2.add(p2.id);
+					  if (!Grafo.contains(p2)) {
+						  Grafo.add(p2);
 					  }
-					  
-					  if (criar2 == 1) {  
-						  Classe1 classe12 = new Classe1();
-						  classe12.ids2.add(Integer.parseInt(encontro[0]));
-						  Classe2 classe21 = new Classe2();
-						  classe21.id1 = (Integer.parseInt(encontro[1]));
-						  classe21.classe = classe12;
-						  Grafo.add(classe21);
-					  }
-			  
+					  Grafo.get(Grafo.indexOf(p2)).ids2.add(p1.id);
 				  }
 				  n++;
 			  }
 			  
-			  class Grafico {
-				  int pessoas;
-				  int encontros;
-				  @Override
-					public String toString() {
-						return "Grafico [pessoas=" + pessoas + ", encontros=" + encontros + "]";
-					}
-			  }
-			  
-			  List<Grafico> imprimir = new ArrayList<Grafico>();
-			  
-			  for (int i = 0; i < Grafo.size(); i++) {
-				  int criar3 = 1;
-				  Grafico grafico = new Grafico();
-				  grafico.encontros = Grafo.get(i).classe.ids2.size();
-				  grafico.pessoas = 1;
-				  for (int j = 0; j < imprimir.size(); j++) {
-					  if (imprimir.get(j).encontros == grafico.encontros) {
-						  imprimir.get(j).pessoas = imprimir.get(j).pessoas + 1;
-						  criar3 = 0;
-						  break;
-					  }
+			  Map<Integer, Integer> mapGraus = new HashMap<Integer, Integer>();
+			  for (Classe1 classe1 : Grafo) {
+				  if (!mapGraus.containsKey(classe1.ids2.size())) {
+					  mapGraus.put(classe1.ids2.size(), 0);
 				  }
-				  if (criar3 == 1) imprimir.add(grafico);
+				  mapGraus.put(classe1.ids2.size(), mapGraus.get(classe1.ids2.size()) + 1); 
 			  }
-			  
-			  System.out.println("Numero total de arestas: " + totalArestas);
-			  System.out.println("Pessoas x Encontros");
-			  System.out.println(86318 - Grafo.size() + "\t" + 0);
-			  for (int j = 0; j < imprimir.size(); j++) {
-				  System.out.println(imprimir.get(j).pessoas + "\t" + imprimir.get(j).encontros);
+			  mapGraus.put(0, 86318 - Grafo.size());
+			  System.out.println("Total de Arestas: " + Grafo.size()/2);
+			  System.out.println("Grau x Quantidade de Pessoas com esse grau");
+			  for (Integer grau : mapGraus.keySet()) {
+				  System.out.println(grau + "\t" + mapGraus.get(grau));
 			  }
-			  
+
 		    } catch (FileNotFoundException e) {
 		        e.printStackTrace();
 		    } catch (IOException e) {
