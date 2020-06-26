@@ -1,0 +1,179 @@
+import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class EP4deAED2 {
+
+	public static void main(String[] args) {
+		EP4deAED2 obj = new EP4deAED2();
+		obj.run();
+
+	}
+	
+	class Classe1 {
+		Integer id;
+		Set<Integer> ids2 = new HashSet<Integer>();
+		
+		public Classe1(Integer id) {
+			this.id = id;
+		}
+		
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getEnclosingInstance().hashCode();
+			result = prime * result + ((id == null) ? 0 : id.hashCode());
+			return result;
+		}
+
+
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Classe1 other = (Classe1) obj;
+			if (!getEnclosingInstance().equals(other.getEnclosingInstance()))
+				return false;
+			if (id == null) {
+				if (other.id != null)
+					return false;
+			} else if (!id.equals(other.id))
+				return false;
+			return true;
+		}
+
+
+
+		@Override
+		public String toString() {
+			return "[id=" + id + ", e: " + ids2 + "]";
+		}
+
+
+
+		private EP4deAED2 getEnclosingInstance() {
+			return EP4deAED2.this;
+		}
+	}
+	
+	public void run() {
+		  String cenario = "C:/Users/maria/Desktop/trad3.txt";
+		  BufferedReader br = null;
+		  String linha = "";
+		  List<Classe1> Grafo = new ArrayList<Classe1>();
+		  Date inicio = new Date();
+		  try {
+
+			  br = new BufferedReader(new FileReader(cenario));
+			  while ((linha = br.readLine()) != null) {
+					  String[] encontro = linha.split(" ");
+					  
+					  Classe1 p1 = new Classe1(Integer.parseInt(encontro[0]));
+					  Classe1 p2 = new Classe1(Integer.parseInt(encontro[1]));
+					  if (!Grafo.contains(p1)) {
+						  Grafo.add(p1);
+					  }
+					  Grafo.get(Grafo.indexOf(p1)).ids2.add(p2.id);
+					  if (!Grafo.contains(p2)) {
+						  Grafo.add(p2);
+					  }
+					  Grafo.get(Grafo.indexOf(p2)).ids2.add(p1.id);
+				  
+			  }
+			  
+			  Integer matriz[][] = new Integer[Grafo.size()][Grafo.size()];
+			  for (int i = 0; i < Grafo.size(); i++) {
+				  for (int j = 0; j < Grafo.size(); j++) {
+					  matriz[i][j] = 0; //inicializando com 0, significando ausencia do caminho
+				  }
+			  }
+			  
+			  List<Classe1> Passos = new ArrayList<Classe1>();
+			  for (int j = 0; j < Grafo.size(); j++) {
+				  Classe1 p0 = new Classe1(1);
+				  Passos.add(p0);
+				  Passos.get(Passos.indexOf(p0)).ids2 = Grafo.get(j).ids2;
+				  
+				  Set<Integer> jaApareceu = new HashSet<Integer>();
+				  jaApareceu.add(Grafo.get(j).id);
+				  jaApareceu.addAll(Passos.get(Passos.indexOf(p0)).ids2);
+				  
+				  for (int i = 2; i < Grafo.size(); i++) {
+					  if (Passos.get(i-2).ids2.size() == 0) {
+						  Passos.remove(i-2);
+						  break;
+					  }
+					  Integer [] array = new Integer [Passos.get(i-2).ids2.size()];
+					  Passos.get(i-2).ids2.toArray(array);
+					  
+					  Classe1 p1 = new Classe1(i);
+					  Passos.add(p1);
+					  
+					  for (Integer Array : array) {
+						  for (Classe1 classe1 : Grafo) {
+							  if (classe1.id.equals(Array)) {
+								  Set<Integer> adicionar = new HashSet<Integer>();
+								  adicionar.addAll(Grafo.get(Grafo.indexOf(classe1)).ids2);
+								  adicionar.removeAll(jaApareceu);
+								  Passos.get(Passos.indexOf(p1)).ids2.addAll(adicionar);
+								  jaApareceu.addAll(adicionar);
+								  adicionar.clear();
+								  break;
+							  }
+						  }
+						  
+					  }
+				  }
+				  jaApareceu.clear();
+				  
+				  for (int k = 0; k < Passos.size(); k++) {
+					  Integer [] array = new Integer [Passos.get(k).ids2.size()];
+					  Passos.get(k).ids2.toArray(array);
+					  for (Integer Array : array) {
+						  matriz[Grafo.get(j).id][Array] = Passos.get(k).id;
+					  }
+				  }
+				  Passos.clear();
+			  }
+			  
+			  Map<Integer, Integer> mapPassos = new HashMap<Integer, Integer>();
+			  for (int i = 0; i < matriz.length; i++) {
+				  for (int j = i+1; j < matriz.length; j++) {
+					  if (matriz[i][j] != 0 && !mapPassos.containsKey(matriz[i][j])) {
+						  mapPassos.put(matriz[i][j], 0);
+					  }
+					  if (matriz[i][j] != 0) mapPassos.put(matriz[i][j], mapPassos.get(matriz[i][j]) + 1);
+				  }
+			  }
+			  
+			  System.out.println("Passos x Frequencia dos Passos");
+			  for (Integer passos : mapPassos.keySet()) {
+				  System.out.println(passos + "\t" + mapPassos.get(passos));
+			  }
+			  
+			  System.out.println("Tempo total: " + (new Date().getTime()-inicio.getTime()) + "ms");
+			  
+		    } catch (FileNotFoundException e) {
+		        e.printStackTrace();
+		    } catch (IOException e) {
+		        e.printStackTrace();
+		    } finally {
+		        if (br != null) {
+		            try {
+		                br.close();
+		            } catch (IOException e) {
+		                e.printStackTrace();
+		            }
+		        }
+		    }
+	  }
+	
+}
