@@ -1,0 +1,177 @@
+import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class CriandoGigante3 {
+
+	public static void main(String[] args) {
+		CriandoGigante3 obj = new CriandoGigante3();
+		obj.run();
+
+	}
+	
+	class Classe1 {
+		Integer id;
+		Set<Integer> ids2 = new HashSet<Integer>();
+		
+		public Classe1(Integer id) {
+			this.id = id;
+		}
+		
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getEnclosingInstance().hashCode();
+			result = prime * result + ((id == null) ? 0 : id.hashCode());
+			return result;
+		}
+
+
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Classe1 other = (Classe1) obj;
+			if (!getEnclosingInstance().equals(other.getEnclosingInstance()))
+				return false;
+			if (id == null) {
+				if (other.id != null)
+					return false;
+			} else if (!id.equals(other.id))
+				return false;
+			return true;
+		}
+
+
+
+		@Override
+		public String toString() {
+			return "[id=" + id + ", e: " + ids2 + "] ";
+		}
+
+
+
+		private CriandoGigante1 getEnclosingInstance() {
+			return CriandoGigante1.this;
+		}
+	}
+	
+	public void run() {
+		  String cenario = "C:/Users/maria/Desktop/cenario3.txt";
+		  BufferedReader br = null;
+		  String linha = "";
+		  int n = 0;
+		  List<Classe1> Grafo = new ArrayList<Classe1>();
+		  try {
+
+			  br = new BufferedReader(new FileReader(cenario));
+			  while ((linha = br.readLine()) != null) {
+				  if (n > 1) {
+					  String[] encontro = linha.split(" ");
+					  
+					  Classe1 p1 = new Classe1(Integer.parseInt(encontro[0]));
+					  Classe1 p2 = new Classe1(Integer.parseInt(encontro[1]));
+					  if (!Grafo.contains(p1)) {
+						  Grafo.add(p1);
+					  }
+					  Grafo.get(Grafo.indexOf(p1)).ids2.add(p2.id);
+					  if (!Grafo.contains(p2)) {
+						  Grafo.add(p2);
+					  }
+					  Grafo.get(Grafo.indexOf(p2)).ids2.add(p1.id);
+				  }
+				  n++;
+			  }
+			  
+			  List<Set<Integer>> componentesConexas = new ArrayList<Set<Integer>>();
+			  for (int i = 0; i < Grafo.size(); i ++) {
+				  Classe1 classe1 = Grafo.get(i);
+				  Set<Integer> subgrafos = new HashSet<Integer>();
+				  subgrafos.add(classe1.id);
+				  Integer [] array = new Integer [classe1.ids2.size()];
+				  classe1.ids2.toArray(array);
+				  Integer [] array3 = new Integer [subgrafos.size()];
+				  subgrafos.toArray(array3);
+				  for (Integer Array : array) subgrafos.add(Array);
+				  int pare = 0;
+				  for (int j = 0; j < componentesConexas.size(); j ++) {
+					  Set<Integer> set = componentesConexas.get(j);
+					  Integer [] array2 = new Integer [set.size()];
+					  set.toArray(array2);
+					  for (Integer Array2 : array2) {
+						  for (Integer Array3 : array3) {
+							  if (Array3.equals(Array2)) {
+								  componentesConexas.remove(j);
+								  subgrafos.addAll(set);
+								  array3 = new Integer [subgrafos.size()];
+								  subgrafos.toArray(array3);
+								  pare = 1;
+								  j = j - 1;
+								  break;
+							  }
+						  }
+						  if (pare == 1) {
+							  pare = 0;
+							  break;
+						  }
+					  }
+				  }
+				  componentesConexas.add(subgrafos);
+			  }
+			  
+			  Set<Integer> ComponenteGigante = new HashSet<Integer>();
+			  for (Set<Integer> set : componentesConexas) {
+				  if (set.size() == 2368) {
+					  ComponenteGigante = set;
+					  break;
+				  }
+			  }
+			  
+			  for (int i = 0; i < Grafo.size(); i++) {
+				  if (!ComponenteGigante.contains(Grafo.get(i).id)) {
+					  Grafo.remove(i);
+					  i = i - 1;
+					  continue;
+				  }
+				  Integer [] array = new Integer [Grafo.get(i).ids2.size()];
+				  Grafo.get(i).ids2.toArray(array);
+				  for (int j = 0; j < array.length; j++) {
+					  if (!ComponenteGigante.contains(array[j])) {
+						  Grafo.get(i).ids2.remove(array[j]);
+						  j = j - 1;
+					  }
+				  }
+			  }
+			  
+			  for (int i = 0; i < Grafo.size(); i++) {
+				  Integer [] array = new Integer [Grafo.get(i).ids2.size()];
+				  Grafo.get(i).ids2.toArray(array);
+				  for (Integer Array : array) {
+					  System.out.println(Grafo.get(i).id + " " + Array);
+				  }
+			  }
+
+		    } catch (FileNotFoundException e) {
+		        e.printStackTrace();
+		    } catch (IOException e) {
+		        e.printStackTrace();
+		    } finally {
+		        if (br != null) {
+		            try {
+		                br.close();
+		            } catch (IOException e) {
+		                e.printStackTrace();
+		            }
+		        }
+		    }
+	  }
+	
+}
