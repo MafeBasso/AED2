@@ -1,0 +1,154 @@
+import java.util.*;
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+
+public class EP5 {
+
+	public static void main(String[] args) {
+		EP5 obj = new EP5();
+		obj.run();
+
+	}
+	
+	class Classe1 {
+		Integer id;
+		char SIR = 'S';
+		Set<Integer> ids2 = new HashSet<Integer>();
+		
+		public Classe1(Integer id) {
+			this.id = id;
+		}
+		
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + getEnclosingInstance().hashCode();
+			result = prime * result + ((id == null) ? 0 : id.hashCode());
+			return result;
+		}
+
+
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Classe1 other = (Classe1) obj;
+			if (!getEnclosingInstance().equals(other.getEnclosingInstance()))
+				return false;
+			if (id == null) {
+				if (other.id != null)
+					return false;
+			} else if (!id.equals(other.id))
+				return false;
+			return true;
+		}
+
+
+
+		@Override
+		public String toString() {
+			return "[id=" + id + ", e: " + ids2 + "] ";
+		}
+
+
+
+		private EP5 getEnclosingInstance() {
+			return EP5.this;
+		}
+	}
+	
+	public void run() {
+		  String cenario = "C:/Users/maria/Desktop/gigant3.txt";
+		  BufferedReader br = null;
+		  String linha = "";
+		  List<Classe1> Grafo = new ArrayList<Classe1>();
+		  double c = 0.8;
+		  double r = 0.4;
+		  try {
+
+			  br = new BufferedReader(new FileReader(cenario));
+			  while ((linha = br.readLine()) != null) {
+					  String[] encontro = linha.split(" ");
+					  
+					  Classe1 p1 = new Classe1(Integer.parseInt(encontro[0]));
+					  Classe1 p2 = new Classe1(Integer.parseInt(encontro[1]));
+					  if (!Grafo.contains(p1)) {
+						  Grafo.add(p1);
+					  }
+					  Grafo.get(Grafo.indexOf(p1)).ids2.add(p2.id);
+					  if (!Grafo.contains(p2)) {
+						  Grafo.add(p2);
+					  }
+					  Grafo.get(Grafo.indexOf(p2)).ids2.add(p1.id);
+			  }
+			  
+			  Set<Integer> infectados = new HashSet<Integer>();
+			  Set<Integer> w = new HashSet<Integer>();
+			  Random primeiro = new Random();
+			  int index = primeiro.nextInt(Grafo.size());
+			  Grafo.get(index).SIR = 'I';
+			  infectados.add(index);
+			  int recuperados = 0;
+			  int tempo = 0;
+			  System.out.println("Tempo/Passos" + " " + "Infectados" + " " + "Suscetíveis" + " " + "Recuperados");
+			  while (infectados.size() != 0 || recuperados == Grafo.size()-1) {
+				  Integer [] array1 = new Integer [infectados.size()];
+				  infectados.toArray(array1);
+				  for (Integer Array1 : array1) {
+					  System.out.println(tempo + "\t" + infectados.size() + "\t" + (Grafo.size()-infectados.size()-recuperados) + "\t" + recuperados);
+					  double x = Math.random();
+					  if (x <= r) {
+						  Grafo.get(Array1).SIR = 'R';
+						  infectados.remove(Array1);
+						  recuperados++;
+					  } else {
+						  Integer [] array = new Integer [Grafo.get(Array1).ids2.size()];
+						  Grafo.get(Array1).ids2.toArray(array);
+						  for (Integer Array : array) w.add(Array);
+						  
+						  for (int i = 0; i < Grafo.size(); i++) {
+							  if (w.size() == 0) break;
+							  for (Integer id : w) {
+								  if (Grafo.get(i).id.equals(id)) {
+									  if (Grafo.get(i).SIR == 'S') {
+										  double y = Math.random();
+										  if (y <= c) {
+											  Grafo.get(i).SIR = 'I';
+											  infectados.add(i);
+										  }
+									  }
+									  w.remove(id);
+									  break;
+								  }
+							  }
+						  }
+					  }
+					  tempo++;
+				  }
+			  }
+			  System.out.println(tempo + "\t" + infectados.size() + "\t" + (Grafo.size()-infectados.size()-recuperados) + "\t" + recuperados);
+			  
+		    } catch (FileNotFoundException e) {
+		        e.printStackTrace();
+		    } catch (IOException e) {
+		        e.printStackTrace();
+		    } finally {
+		        if (br != null) {
+		            try {
+		                br.close();
+		            } catch (IOException e) {
+		                e.printStackTrace();
+		            }
+		        }
+		    }
+	  }
+	
+}
