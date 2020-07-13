@@ -96,19 +96,19 @@ public class EP5 {
 			  int index = primeiro.nextInt(Grafo.size());
 			  Grafo.get(index).SIR = 'I';
 			  infectados.add(index);
-			  int recuperados = 0;
+			  int removidos = 0;
 			  int tempo = 0;
-			  System.out.println("Tempo/Passos" + " " + "Infectados" + " " + "Suscetíveis" + " " + "Recuperados");
-			  while (infectados.size() != 0 || recuperados == Grafo.size()-1) {
+			  System.out.println("Tempo/Passos" + " " + "Infectados" + " " + "Suscetíveis" + " " + "Removidos");
+			  while (infectados.size() != 0 || removidos == Grafo.size()-1) {
 				  Integer [] array1 = new Integer [infectados.size()];
 				  infectados.toArray(array1);
 				  for (Integer Array1 : array1) {
-					  System.out.println(tempo + "\t" + infectados.size() + "\t" + (Grafo.size()-infectados.size()-recuperados) + "\t" + recuperados);
+					  System.out.println(tempo + "\t" + infectados.size() + "\t" + (Grafo.size()-infectados.size()-removidos) + "\t" + removidos);
 					  double x = Math.random();
 					  if (x <= r) {
 						  Grafo.get(Array1).SIR = 'R';
 						  infectados.remove(Array1);
-						  recuperados++;
+						  removidos++;
 					  } else {
 						  Integer [] array = new Integer [Grafo.get(Array1).ids2.size()];
 						  Grafo.get(Array1).ids2.toArray(array);
@@ -134,7 +134,7 @@ public class EP5 {
 					  tempo++;
 				  }
 			  }
-			  System.out.println(tempo + "\t" + infectados.size() + "\t" + (Grafo.size()-infectados.size()-recuperados) + "\t" + recuperados);
+			  System.out.println(tempo + "\t" + infectados.size() + "\t" + (Grafo.size()-infectados.size()-removidos) + "\t" + removidos);
 			  
 		    } catch (FileNotFoundException e) {
 		        e.printStackTrace();
